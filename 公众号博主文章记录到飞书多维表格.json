@@ -1,0 +1,221 @@
+{
+  "name": "公众号博主文章记录到飞书多维表格",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        -96
+      ],
+      "id": "2f662216-b781-4302-9944-add724f1b235",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "=http://rss.jintiankansha.me/rss/GM2DAOJSGV6DGYJSMQZWMMJRMRQTMMLGHEZGKNJUME4GEOBRMIZDKZBTGA4DMNLDMQ3DOMJQGNSQ====",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -128,
+        -224
+      ],
+      "id": "e52e2d54-fb76-4741-8337-60476c77713a",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "url": "=http://rss.jintiankansha.me/rss/GEYDQOJYPQ4WKMTEMU2TANTGMMZGIZDCG4ZTEZRQGNSDSZLFHAZTGYZQGA3GCM3DGBRDMMRZMY======",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -112,
+        16
+      ],
+      "id": "bdfcb802-329d-4f14-a1b7-a033963b1d92",
+      "name": "RSS Read1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        128,
+        -96
+      ],
+      "id": "e0c9bd71-439c-41b6-9456-04f93139efe7",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "dc4edd31-5739-431c-865e-b21fcca189ac",
+              "leftValue": "={{ new Date($json.pubDate).getTime() }}",
+              "rightValue": "={{ Date.now() - 72 * 3600 * 1000 }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        -96
+      ],
+      "id": "aa65e9ff-3fba-4df5-adc0-7ed0ea7c5f86",
+      "name": "筛选新闻时间"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        544,
+        -96
+      ],
+      "id": "30c53e77-3033-4249-9a73-af28f7ff26e6",
+      "name": "循环项目"
+    },
+    {
+      "parameters": {
+        "resource": "bitable",
+        "operation": "bitable:table:record:add",
+        "app_toke": "=IoV6bGKcpasnmYsOEAgck1FVnbb",
+        "table_id": "tblPUES5bMQcFuHu",
+        "body": "={\n  \"fields\": {\n  \"文章标题\": \"{{ $json.title }}\",\n  \"文章链接\": \"{{ $json.link }}\",\n  \"收录时间\": \"{{ $now.toFormat('yyyy-MM-dd') }}\"\n  }\n}\n"
+      },
+      "type": "n8n-nodes-feishu-lite.feishuNode",
+      "typeVersion": 1,
+      "position": [
+        848,
+        -80
+      ],
+      "id": "ac0390fd-296b-45e6-a219-b0d234d04189",
+      "name": "Bitable:table:record:add bitable",
+      "credentials": {
+        "feishuCredentialsApi": {
+          "id": "yKvxfx4SqVw0zIio",
+          "name": "Feishu Credentials account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Read1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "筛选新闻时间",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "筛选新闻时间": {
+      "main": [
+        [
+          {
+            "node": "循环项目",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "循环项目": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Bitable:table:record:add bitable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bitable:table:record:add bitable": {
+      "main": [
+        [
+          {
+            "node": "循环项目",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "82e68c60-cdc8-41fb-9ce2-367391d26223",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "06a11e9385892f171be5075de8b0311d5cc673f9a3458756793f00accb63c18c"
+  },
+  "id": "nPhS7UDOMTXo1Pzg",
+  "tags": []
+}
