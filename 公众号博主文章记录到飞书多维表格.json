@@ -14,7 +14,7 @@
     },
     {
       "parameters": {
-        "url": "=http://rss.jintiankansha.me/rss/GM2DAOJSGV6DGYJSMQZWMMJRMRQTMMLGHEZGKNJUME4GEOBRMIZDKZBTGA4DMNLDMQ3DOMJQGNSQ====",
+        "url": "=http://rss.jintiankansha.me/rss/====",
         "options": {}
       },
       "type": "n8n-nodes-base.rssFeedRead",
@@ -28,7 +28,7 @@
     },
     {
       "parameters": {
-        "url": "=http://rss.jintiankansha.me/rss/GEYDQOJYPQ4WKMTEMU2TANTGMMZGIZDCG4ZTEZRQGNSDSZLFHAZTGYZQGA3GCM3DGBRDMMRZMY======",
+        "url": "=http://rss.jintiankansha.me/rss/======",
         "options": {}
       },
       "type": "n8n-nodes-base.rssFeedRead",
